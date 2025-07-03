@@ -2,153 +2,142 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Solvent Mixture Calculator</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Solvent Mixture Calculator</title>
   <style>
     body {
-      background: linear-gradient(to right, #d4fc79, #96e6a1);
-      font-family: 'Segoe UI', sans-serif;
+      font-family: Arial, sans-serif;
+      background: #f2f7ff;
+      margin: 0;
       padding: 20px;
-      text-align: center;
     }
-
-    h1 {
-      color: #004d00;
-      margin-bottom: 20px;
-    }
-
     .container {
-      background: white;
-      padding: 25px;
-      border-radius: 20px;
       max-width: 500px;
       margin: auto;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      background: white;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.15);
     }
-
-    .row {
-      margin-bottom: 15px;
-    }
-
-    label {
-      display: block;
-      font-weight: bold;
-      margin-bottom: 5px;
+    h2 {
+      text-align: center;
       color: #333;
     }
-
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
     input, select {
       width: 100%;
-      padding: 12px;
-      border-radius: 12px;
+      padding: 10px;
+      margin-top: 5px;
       border: 1px solid #ccc;
-      font-size: 16px;
-      box-sizing: border-box;
+      border-radius: 8px;
     }
-
     button {
+      width: 48%;
       margin-top: 20px;
-      padding: 12px 20px;
-      font-size: 18px;
-      background-color: #009933;
-      color: white;
+      padding: 12px;
       border: none;
-      border-radius: 12px;
+      border-radius: 10px;
+      font-size: 16px;
       cursor: pointer;
     }
-
-    button:hover {
-      background-color: #007a29;
+    #calculateBtn {
+      background-color: #4CAF50;
+      color: white;
     }
-
-    .result {
-      margin-top: 25px;
-      font-size: 18px;
+    #resetBtn {
+      background-color: #e74c3c;
+      color: white;
+    }
+    #result {
+      margin-top: 20px;
+      background: #f0f0f0;
+      padding: 15px;
+      border-radius: 10px;
+      text-align: center;
       font-weight: bold;
+      color: #2c3e50;
     }
   </style>
 </head>
 <body>
-  <h1>Solvent Mixture Calculator</h1>
   <div class="container">
-    <div class="row">
-      <label for="mode">Select Input Mode:</label>
-      <select id="mode">
+    <h2>Solvent Mixture Calculator</h2>
+    <form id="solventForm">
+      <label for="mode">Input Mode:</label>
+      <select id="mode" required>
         <option value="ratio">Ratio</option>
-        <option value="percentage">Percentage</option>
+        <option value="percent">Percentage</option>
       </select>
-    </div>
 
-    <div class="row">
-      <label>Solvent 1</label>
-      <input type="number" id="s1" placeholder="Enter value">
-    </div>
-    <div class="row">
-      <label>Solvent 2</label>
-      <input type="number" id="s2" placeholder="Enter value">
-    </div>
-    <div class="row">
-      <label>Solvent 3</label>
-      <input type="number" id="s3" placeholder="Enter value">
-    </div>
-    <div class="row">
-      <label>Solvent 4</label>
-      <input type="number" id="s4" placeholder="Enter value">
-    </div>
+      <label for="s1">Solvent 1:</label>
+      <input type="number" id="s1" required>
 
-    <div class="row">
-      <label>Total Volume (mL):</label>
-      <input type="number" id="total" placeholder="Enter total volume">
-    </div>
+      <label for="s2">Solvent 2:</label>
+      <input type="number" id="s2" required>
 
-    <button onclick="calculate()">Calculate</button>
+      <label for="s3">Solvent 3:</label>
+      <input type="number" id="s3">
 
-    <div class="result" id="output"></div>
+      <label for="s4">Solvent 4:</label>
+      <input type="number" id="s4">
+
+      <label for="totalVolume">Total Volume (mL):</label>
+      <input type="number" id="totalVolume" required>
+
+      <div style="display: flex; justify-content: space-between;">
+        <button type="button" id="calculateBtn" onclick="calculate()">Calculate</button>
+        <button type="button" id="resetBtn" onclick="resetForm()">Reset</button>
+      </div>
+    </form>
+
+    <div id="result"></div>
   </div>
 
   <script>
     function calculate() {
-      const s1 = parseFloat(document.getElementById("s1").value) || 0;
-      const s2 = parseFloat(document.getElementById("s2").value) || 0;
-      const s3 = parseFloat(document.getElementById("s3").value) || 0;
-      const s4 = parseFloat(document.getElementById("s4").value) || 0;
-      const total = parseFloat(document.getElementById("total").value);
       const mode = document.getElementById("mode").value;
-
-      if (!total || total <= 0) {
-        document.getElementById("output").innerText = "Please enter a valid total volume.";
-        return;
-      }
-
-      let v1, v2, v3, v4;
+      const s1 = Number(document.getElementById("s1").value) || 0;
+      const s2 = Number(document.getElementById("s2").value) || 0;
+      const s3 = Number(document.getElementById("s3").value) || 0;
+      const s4 = Number(document.getElementById("s4").value) || 0;
+      const total = Number(document.getElementById("totalVolume").value);
+      const resultDiv = document.getElementById("result");
 
       if (mode === "ratio") {
         const sum = s1 + s2 + s3 + s4;
         if (sum === 0) {
-          document.getElementById("output").innerText = "Enter at least one ratio value.";
+          resultDiv.innerHTML = "Please enter at least one solvent value.";
           return;
         }
-        v1 = (s1 / sum) * total;
-        v2 = (s2 / sum) * total;
-        v3 = (s3 / sum) * total;
-        v4 = (s4 / sum) * total;
+        resultDiv.innerHTML = `
+          <p>Solvent 1: ${(total * s1 / sum).toFixed(2)} mL</p>
+          <p>Solvent 2: ${(total * s2 / sum).toFixed(2)} mL</p>
+          <p>Solvent 3: ${(total * s3 / sum).toFixed(2)} mL</p>
+          <p>Solvent 4: ${(total * s4 / sum).toFixed(2)} mL</p>
+        `;
       } else {
-        if ((s1 + s2 + s3 + s4) !== 100) {
-          document.getElementById("output").innerText = "Percentages must total 100%.";
+        const totalPercent = s1 + s2 + s3 + s4;
+        if (totalPercent !== 100) {
+          resultDiv.innerHTML = "Percentage must total to 100%.";
           return;
         }
-        v1 = (s1 / 100) * total;
-        v2 = (s2 / 100) * total;
-        v3 = (s3 / 100) * total;
-        v4 = (s4 / 100) * total;
+        resultDiv.innerHTML = `
+          <p>Solvent 1: ${(total * s1 / 100).toFixed(2)} mL</p>
+          <p>Solvent 2: ${(total * s2 / 100).toFixed(2)} mL</p>
+          <p>Solvent 3: ${(total * s3 / 100).toFixed(2)} mL</p>
+          <p>Solvent 4: ${(total * s4 / 100).toFixed(2)} mL</p>
+        `;
       }
+    }
 
-      document.getElementById("output").innerHTML =
-        `Solvent 1: ${v1.toFixed(2)} mL<br>
-         Solvent 2: ${v2.toFixed(2)} mL<br>
-         Solvent 3: ${v3.toFixed(2)} mL<br>
-         Solvent 4: ${v4.toFixed(2)} mL`;
+    function resetForm() {
+      document.getElementById("solventForm").reset();
+      document.getElementById("result").innerHTML = "";
     }
   </script>
 </body>
-  </html>
+</html>
